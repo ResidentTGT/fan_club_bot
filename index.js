@@ -7,8 +7,10 @@ import {
   handleDisableEventButton,
   viewActiveEvents,
   handleRegisterOnEventButton,
+  handleCancelRegistrationButton,
   disableEvent,
   registerOnEvent,
+  cancelRegistration,
 } from "./events.js";
 import { handleUserStart, getUsers } from "./users.js";
 
@@ -60,6 +62,14 @@ bot.onText(/\/menu/, async (msg) => {
             }),
           },
         ],
+        [
+          {
+            text: "Отменить запись на встречу",
+            callback_data: JSON.stringify({
+              method: "handleCancelRegistrationButton",
+            }),
+          },
+        ],
       ],
     },
   });
@@ -67,7 +77,7 @@ bot.onText(/\/menu/, async (msg) => {
 
 bot.on("callback_query", (callbackQuery) => {
   const chatId = callbackQuery.message.chat.id;
-  const userId = callbackQuery.message.from.id;
+  const userId = callbackQuery.from.id;
 
   const queryData = JSON.parse(callbackQuery.data);
 
@@ -87,8 +97,14 @@ bot.on("callback_query", (callbackQuery) => {
     case "handleRegisterOnEventButton":
       handleRegisterOnEventButton(bot, chatId);
       break;
+    case "handleCancelRegistrationButton":
+      handleCancelRegistrationButton(bot, chatId, userId);
+      break;
     case "regOnEvent":
       registerOnEvent(bot, chatId, userId, queryData);
+      break;
+    case "cancelReg":
+      cancelRegistration(bot, chatId, userId, queryData);
       break;
     default:
       bot.sendMessage(chatId, "Непонятно, давай попробуем ещё раз?", {

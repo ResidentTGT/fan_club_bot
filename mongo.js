@@ -30,6 +30,13 @@ const addRecord = async (eventId, userId, number) => {
   console.log("Inserted record =>", insertResult);
 };
 
+const deleteRecord = async (eventId, userId) => {
+  const client = new MongoClient(url);
+  const records = await client.db(dbName).collection("records");
+
+  await records.deleteOne({ eventId, userId });
+};
+
 const getEvents = async (filter) => {
   const client = new MongoClient(url);
   try {
@@ -116,4 +123,5 @@ export {
   disableEvent,
   addRecord,
   getRecords,
+  deleteRecord
 };

@@ -1,9 +1,11 @@
+import { ObjectId } from "mongodb";
 import {
   getEvents,
   addEvent as saveEventToDb,
   disableEvent as disableEventInDb,
   addRecord,
   getRecords,
+  deleteRecord,
 } from "./mongo.js";
 
 const viewActiveEvents = async (bot, chatId) => {
@@ -124,6 +126,37 @@ const handleRegisterOnEventButton = async (bot, chatId) => {
   }
 };
 
+const handleCancelRegistrationButton = async (bot, chatId, userId) => {
+  const records = await getRecords({ userId });
+
+  const eventsIds = records.map((r) => ObjectId(r.eventId));
+
+  const events = await getEvents({ _id: { $in: eventsIds } }, { active: true });
+
+  if (events && events.length) {
+    await bot.sendMessage(chatId, "На какую встречу отменить регистрацию?", {
+      reply_markup: {
+        inline_keyboard: events.map((e) => {
+          return [
+            {
+              text: `${e.name} | ${e.datetime} | ${e.place}`,
+              callback_data: JSON.stringify({
+                method: "cancelReg",
+                eventId: e._id,
+              }),
+            },
+          ];
+        }),
+      },
+    });
+  } else {
+    await bot.sendMessage(
+      chatId,
+      "Вы не зарегистрированы ни на одну из активных встреч."
+    );
+  }
+};
+
 const registerOnEvent = async (bot, chatId, userId, queryData) => {
   const records = await getRecords({ eventId: queryData.eventId });
   const record = records.find((r) => r.userId === userId);
@@ -139,6 +172,11 @@ const registerOnEvent = async (bot, chatId, userId, queryData) => {
   }
 };
 
+const cancelRegistration = async (bot, chatId, userId, queryData) => {
+  await deleteRecord(queryData.eventId, userId);
+  await bot.sendMessage(chatId, `Регистрация на событие отменена!`);
+};
+
 export {
   addEvent,
   handleDisableEventButton,
@@ -146,4 +184,6 @@ export {
   handleRegisterOnEventButton,
   disableEvent,
   registerOnEvent,
+  handleCancelRegistrationButton,
+  cancelRegistration,
 };
