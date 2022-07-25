@@ -1,4 +1,4 @@
-import { MongoClient } from "mongodb";
+import { MongoClient, ObjectId } from "mongodb";
 
 const url = "mongodb://localhost:27017/";
 const dbName = "testdb";
@@ -22,14 +22,36 @@ const addEvent = async (event) => {
   console.log("Inserted event =>", insertResult);
 };
 
-const getEvents = async () => {
+const addRecord = async (eventId, userId, number) => {
+  const client = new MongoClient(url);
+  const records = await client.db(dbName).collection("records");
+
+  const insertResult = await records.insertOne({ eventId, userId, number });
+  console.log("Inserted record =>", insertResult);
+};
+
+const getEvents = async (filter) => {
   const client = new MongoClient(url);
   try {
     const database = client.db(dbName);
     const eventsCollection = database.collection("events");
-    const events = await eventsCollection.find({}).toArray();
-    console.log("Found events =>", events);
+    const events = await eventsCollection.find(filter ? filter : {}).toArray();
+    // console.log("Found events =>", events);
     return events;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const getRecords = async (filter) => {
+  const client = new MongoClient(url);
+  try {
+    const database = client.db(dbName);
+    const recordsCollection = database.collection("records");
+    const records = await recordsCollection
+      .find(filter ? filter : {})
+      .toArray();
+    return records;
   } catch (err) {
     console.log(err);
   }
@@ -42,7 +64,7 @@ const findUser = async (id) => {
     .collection("users")
     .findOne({ telegramUserId: id });
 
-  console.log("Finded user =>", user);
+  // console.log("Finded user =>", user);
   return user;
 };
 
@@ -60,13 +82,23 @@ const deleteUsers = async () => {
   await users.deleteMany({});
   console.log("All users were deleted!");
 };
+
+const disableEvent = async (eventId) => {
+  const client = new MongoClient(url);
+  const events = await client.db(dbName).collection("events");
+  await events.findOneAndUpdate(
+    { _id: ObjectId(eventId) },
+    { $set: { active: false } }
+  );
+};
+
 const getUsers = async () => {
   const client = new MongoClient(url);
   try {
     const database = client.db(dbName);
     const usersCollection = database.collection("users");
     const users = await usersCollection.find({}).toArray();
-    console.log("Found users =>", users);
+    // console.log("Found users =>", users);
     return users;
   } catch (err) {
     console.log(err);
@@ -81,4 +113,7 @@ export {
   addUser,
   getUsers,
   deleteUsers,
+  disableEvent,
+  addRecord,
+  getRecords,
 };
