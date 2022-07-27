@@ -30,6 +30,23 @@ const addRecord = async (eventId, userId, number) => {
   console.log("Inserted record =>", insertResult);
 };
 
+const addArrival = async (eventId, userId) => {
+  const client = new MongoClient(url);
+  const arrivals = await client.db(dbName).collection("arrivals");
+
+  const insertResult = await arrivals.insertOne({ eventId, userId });
+  console.log("Inserted arrival =>", insertResult);
+};
+
+const getArrival = async (eventId, userId) => {
+  const client = new MongoClient(url);
+
+  const database = client.db(dbName);
+  const arrivalsCollection = database.collection("arrivals");
+  const arrival = await arrivalsCollection.findOne({ eventId, userId });
+  return arrival;
+};
+
 const deleteRecord = async (eventId, userId) => {
   const client = new MongoClient(url);
   const records = await client.db(dbName).collection("records");
@@ -59,6 +76,18 @@ const getRecords = async (filter) => {
       .find(filter ? filter : {})
       .toArray();
     return records;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const getRecord = async (filter) => {
+  const client = new MongoClient(url);
+  try {
+    const database = client.db(dbName);
+    const recordsCollection = database.collection("records");
+    const record = await recordsCollection.findOne(filter ? filter : {});
+    return record;
   } catch (err) {
     console.log(err);
   }
@@ -123,5 +152,8 @@ export {
   disableEvent,
   addRecord,
   getRecords,
-  deleteRecord
+  deleteRecord,
+  getRecord,
+  addArrival,
+  getArrival
 };

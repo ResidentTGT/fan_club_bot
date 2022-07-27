@@ -6,6 +6,10 @@ import {
   addRecord,
   getRecords,
   deleteRecord,
+  getRecord,
+  findUser,
+  getArrival,
+  addArrival,
 } from "./mongo.js";
 
 const viewActiveEvents = async (bot, chatId) => {
@@ -20,7 +24,7 @@ const viewActiveEvents = async (bot, chatId) => {
             }, дата/время: ${event.datetime}, место встречи: ${event.place}`
         )
         .join("\n")
-    : "Встреч не найдено.";
+    : "Активных встреч не найдено.";
 
   await bot.sendMessage(chatId, message);
 };
@@ -177,6 +181,70 @@ const cancelRegistration = async (bot, chatId, userId, queryData) => {
   await bot.sendMessage(chatId, `Регистрация на событие отменена!`);
 };
 
+const handleMarkArrivalButton = async (bot, chatId) => {
+  const events = await getEvents({ active: true });
+
+  if (events && events.length) {
+    await bot.sendMessage(chatId, "Какая встреча сейчас?", {
+      reply_markup: {
+        inline_keyboard: events.map((e) => {
+          return [
+            {
+              text: `${e.name} | ${e.datetime} | ${e.place}`,
+              callback_data: JSON.stringify({
+                method: "markArrival",
+                eventId: e._id,
+              }),
+            },
+          ];
+        }),
+      },
+    });
+  } else {
+    await bot.sendMessage(chatId, "На данный момент нет активных встреч.");
+  }
+};
+
+const markArrival = async (bot, chatId, queryData) => {
+  await bot
+    .sendMessage(chatId, "Введи номер гостя:", {
+      reply_markup: JSON.stringify({
+        force_reply: true,
+      }),
+    })
+    .then(async (msg) => {
+      await bot.onReplyToMessage(chatId, msg.message_id, async (reply) => {
+        const number = +reply.text;
+        const record = await getRecord({
+          eventId: queryData.eventId,
+          number,
+        });
+        if (record) {
+          const userId = record.userId;
+          const user = await findUser(userId);
+          const arrival = await getArrival(record.eventId, record.userId);
+          if (arrival) {
+            await bot.sendMessage(
+              chatId,
+              `Гость ${user.name} (@${user.telegramUsername}) уже был отмечен.`
+            );
+          } else {
+            await addArrival(record.eventId, record.userId);
+            await bot.sendMessage(
+              chatId,
+              `Гость ${user.name} (@${user.telegramUsername}) отмечен.`
+            );
+          }
+        } else {
+          await bot.sendMessage(
+            chatId,
+            `На данную встречу не зарегистрировано такого номера.`
+          );
+        }
+      });
+    });
+};
+
 export {
   addEvent,
   handleDisableEventButton,
@@ -186,4 +254,6 @@ export {
   registerOnEvent,
   handleCancelRegistrationButton,
   cancelRegistration,
+  handleMarkArrivalButton,
+  markArrival,
 };

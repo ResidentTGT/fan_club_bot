@@ -11,6 +11,8 @@ import {
   disableEvent,
   registerOnEvent,
   cancelRegistration,
+  markArrival,
+  handleMarkArrivalButton,
 } from "./events.js";
 import { handleUserStart, getUsers } from "./users.js";
 
@@ -36,6 +38,12 @@ bot.onText(/\/menu/, async (msg) => {
       inline_keyboard: [
         [
           {
+            text: "Посмотреть все активные встречи",
+            callback_data: JSON.stringify({ method: "viewEvents" }),
+          },
+        ],
+        [
+          {
             text: "Добавить встречу",
             callback_data: JSON.stringify({ method: "addEvent" }),
           },
@@ -46,12 +54,6 @@ bot.onText(/\/menu/, async (msg) => {
             callback_data: JSON.stringify({
               method: "handleDisableEventButton",
             }),
-          },
-        ],
-        [
-          {
-            text: "Посмотреть все активные встречи",
-            callback_data: JSON.stringify({ method: "viewEvents" }),
           },
         ],
         [
@@ -67,6 +69,14 @@ bot.onText(/\/menu/, async (msg) => {
             text: "Отменить запись на встречу",
             callback_data: JSON.stringify({
               method: "handleCancelRegistrationButton",
+            }),
+          },
+        ],
+        [
+          {
+            text: "Отметить приход на встречу",
+            callback_data: JSON.stringify({
+              method: "handleMarkArrivalButton",
             }),
           },
         ],
@@ -105,6 +115,12 @@ bot.on("callback_query", (callbackQuery) => {
       break;
     case "cancelReg":
       cancelRegistration(bot, chatId, userId, queryData);
+      break;
+    case "handleMarkArrivalButton":
+      handleMarkArrivalButton(bot, chatId);
+      break;
+    case "markArrival":
+      markArrival(bot, chatId, queryData);
       break;
     default:
       bot.sendMessage(chatId, "Непонятно, давай попробуем ещё раз?", {
