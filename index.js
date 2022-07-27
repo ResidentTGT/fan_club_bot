@@ -1,6 +1,6 @@
 import TelegramBot from "node-telegram-bot-api";
 import { TELEGRAM_API_TOKEN } from "./token.js";
-import { connectToDatabase } from "./mongo.js";
+import { connectToDatabase, findUser } from "./mongo.js";
 
 import {
   addEvent,
@@ -13,14 +13,62 @@ import {
   cancelRegistration,
   markArrival,
   handleMarkArrivalButton,
+  handleViewCountButton,
+  viewCount,
 } from "./events.js";
 import { handleUserStart, getUsers } from "./users.js";
+
+const mainButtons = [
+  {
+    text: "Посмотреть все активные встречи",
+    public: false,
+    callback_data: JSON.stringify({ method: "viewEvents" }),
+  },
+  {
+    text: "Добавить встречу",
+    public: false,
+    callback_data: JSON.stringify({ method: "addEvent" }),
+  },
+  {
+    text: "Сделать встречу неактивной",
+    public: false,
+    callback_data: JSON.stringify({
+      method: "handleDisableEventButton",
+    }),
+  },
+  {
+    text: "Записаться на встречу",
+    public: true,
+    callback_data: JSON.stringify({
+      method: "handleRegisterOnEventButton",
+    }),
+  },
+  {
+    text: "Отменить запись на встречу",
+    public: true,
+    callback_data: JSON.stringify({
+      method: "handleCancelRegistrationButton",
+    }),
+  },
+  {
+    text: "Отметить приход на встречу",
+    public: false,
+    callback_data: JSON.stringify({
+      method: "handleMarkArrivalButton",
+    }),
+  },
+  {
+    text: "Узнать количество зарегистрировавшихся на встречу",
+    public: false,
+    callback_data: JSON.stringify({
+      method: "handleViewCountButton",
+    }),
+  },
+];
 
 const bot = new TelegramBot(TELEGRAM_API_TOKEN, { polling: true });
 
 await connectToDatabase();
-
-// await deleteUsers();
 
 bot.onText(/\/start/, async (msg) => {
   await handleUserStart(msg, bot);
@@ -32,55 +80,17 @@ bot.onText(/\/users/, async (msg) => {
 
 bot.onText(/\/menu/, async (msg) => {
   const chatId = msg.chat.id;
+  const userId = msg.from.id;
+
+  const user = await findUser(userId);
+
+  const inlineKeyboard = user.admin
+    ? mainButtons
+    : mainButtons.filter((b) => b.public === true);
 
   bot.sendMessage(chatId, "Чего хочешь?", {
     reply_markup: {
-      inline_keyboard: [
-        [
-          {
-            text: "Посмотреть все активные встречи",
-            callback_data: JSON.stringify({ method: "viewEvents" }),
-          },
-        ],
-        [
-          {
-            text: "Добавить встречу",
-            callback_data: JSON.stringify({ method: "addEvent" }),
-          },
-        ],
-        [
-          {
-            text: "Сделать встречу неактивной",
-            callback_data: JSON.stringify({
-              method: "handleDisableEventButton",
-            }),
-          },
-        ],
-        [
-          {
-            text: "Записаться на встречу",
-            callback_data: JSON.stringify({
-              method: "handleRegisterOnEventButton",
-            }),
-          },
-        ],
-        [
-          {
-            text: "Отменить запись на встречу",
-            callback_data: JSON.stringify({
-              method: "handleCancelRegistrationButton",
-            }),
-          },
-        ],
-        [
-          {
-            text: "Отметить приход на встречу",
-            callback_data: JSON.stringify({
-              method: "handleMarkArrivalButton",
-            }),
-          },
-        ],
-      ],
+      inline_keyboard: inlineKeyboard.map((x) => [x]),
     },
   });
 });
@@ -121,6 +131,12 @@ bot.on("callback_query", (callbackQuery) => {
       break;
     case "markArrival":
       markArrival(bot, chatId, queryData);
+      break;
+    case "handleViewCountButton":
+      handleViewCountButton(bot, chatId);
+      break;
+    case "viewCount":
+      viewCount(bot, chatId, queryData);
       break;
     default:
       bot.sendMessage(chatId, "Непонятно, давай попробуем ещё раз?", {

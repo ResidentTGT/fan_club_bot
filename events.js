@@ -167,11 +167,14 @@ const registerOnEvent = async (bot, chatId, userId, queryData) => {
   if (record) {
     await bot.sendMessage(chatId, `Вы уже зарегистрированы на это событие!`);
   } else {
-    const number = records.length + 1;
+    records.sort(function (a, b) {
+      return a - b;
+    });
+    const number = records.length ? records[records.length - 1].number + 1 : 1;
     await addRecord(queryData.eventId, userId, number);
     await bot.sendMessage(
       chatId,
-      `Вы зарегистрировались на событие! Ваш номер: ${number}`
+      `Вы зарегистрировались на событие! Ваш номер: ${number}.`
     );
   }
 };
@@ -245,6 +248,43 @@ const markArrival = async (bot, chatId, queryData) => {
     });
 };
 
+const handleViewCountButton = async (bot, chatId) => {
+  const events = await getEvents({ active: true });
+
+  if (events && events.length) {
+    await bot.sendMessage(chatId, "На какую встречу?", {
+      reply_markup: {
+        inline_keyboard: events.map((e) => {
+          return [
+            {
+              text: `${e.name} | ${e.datetime} | ${e.place}`,
+              callback_data: JSON.stringify({
+                method: "viewCount",
+                eventId: e._id,
+              }),
+            },
+          ];
+        }),
+      },
+    });
+  } else {
+    await bot.sendMessage(chatId, "На данный момент нет активных встреч.");
+  }
+};
+
+const viewCount = async (bot, chatId, queryData) => {
+  const records = await getRecords({ eventId: queryData.eventId });
+
+  await bot.sendMessage(
+    chatId,
+    `На событие зарегистрировано: ${
+      records.length
+    }.\nНомера зарегистрировавшихся: ${records
+      .map((r) => r.number)
+      .join(" | ")}`
+  );
+};
+
 export {
   addEvent,
   handleDisableEventButton,
@@ -256,4 +296,6 @@ export {
   cancelRegistration,
   handleMarkArrivalButton,
   markArrival,
+  handleViewCountButton,
+  viewCount,
 };

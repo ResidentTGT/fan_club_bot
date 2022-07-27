@@ -7,6 +7,7 @@ const registerUser = async (msg, bot) => {
   const newUser = {
     telegramUserId: userId,
     telegramUsername: msg.from.username,
+    admin: false,
   };
   await bot.sendMessage(
     chatId,
