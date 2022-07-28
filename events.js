@@ -275,13 +275,18 @@ const handleViewCountButton = async (bot, chatId) => {
 const viewCount = async (bot, chatId, queryData) => {
   const records = await getRecords({ eventId: queryData.eventId });
 
+  for (let i = 0; i < records.length; i++) {
+    records[i].user = await findUser(records[i].userId);
+  }
+
   await bot.sendMessage(
     chatId,
     `На событие зарегистрировано: ${
       records.length
-    }.\nНомера зарегистрировавшихся: ${records
-      .map((r) => r.number)
-      .join(" | ")}`
+    }.\nЗарегистрировавшиеся: ${records.map(
+      (r) =>
+        "\n" + r.user.name + " (@" + r.user.telegramUsername + "), №" + r.number
+    )}`
   );
 };
 

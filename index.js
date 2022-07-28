@@ -58,8 +58,8 @@ const mainButtons = [
     }),
   },
   {
-    text: "Узнать количество зарегистрировавшихся на встречу",
-    public: false,
+    text: "Показать зарегистрировавшихся на встречу",
+    public: true,
     callback_data: JSON.stringify({
       method: "handleViewCountButton",
     }),
