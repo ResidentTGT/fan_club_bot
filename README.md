@@ -6,7 +6,7 @@
 1. Арендовать удаленный сервер Ubuntu
 2. Зайти на сервер через SSH ```ssh root@{ip}```
 3. [Установить NodeJS и npm](https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-ubuntu-20-04-ru)
-4. [Установить MongoDB]
+4. [Установить MongoDB](https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-ubuntu/#install-mongodb-community-edition)
 5. ```git clone репозитория```
 6. ```cd fan_club_bot```
 7. В файл token.js вставить свой токен бота
