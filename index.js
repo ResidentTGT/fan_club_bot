@@ -20,48 +20,48 @@ import { handleUserStart, getUsers } from "./users.js";
 
 const mainButtons = [
   {
-    text: "Посмотреть все активные встречи",
+    text: "Предстоящие мероприятия",
     public: false,
     callback_data: JSON.stringify({ method: "viewEvents" }),
   },
   {
-    text: "Добавить встречу",
+    text: "Добавить мероприятие",
     public: false,
     callback_data: JSON.stringify({ method: "addEvent" }),
   },
   {
-    text: "Сделать встречу неактивной",
+    text: "Удалить мероприятие",
     public: false,
     callback_data: JSON.stringify({
       method: "handleDisableEventButton",
     }),
   },
   {
-    text: "Записаться на встречу",
+    text: "Записаться на мероприятие",
     public: true,
     callback_data: JSON.stringify({
       method: "handleRegisterOnEventButton",
     }),
   },
   {
-    text: "Отменить запись на встречу",
+    text: "Отменить запись на мероприятие ",
     public: true,
     callback_data: JSON.stringify({
       method: "handleCancelRegistrationButton",
     }),
   },
   {
-    text: "Отметить приход на встречу",
-    public: false,
-    callback_data: JSON.stringify({
-      method: "handleMarkArrivalButton",
-    }),
-  },
-  {
-    text: "Показать зарегистрировавшихся на встречу",
+    text: "Показать записавшихся",
     public: true,
     callback_data: JSON.stringify({
       method: "handleViewCountButton",
+    }),
+  },
+  {
+    text: "Отметить пришедшего",
+    public: false,
+    callback_data: JSON.stringify({
+      method: "handleMarkArrivalButton",
     }),
   },
 ];
