@@ -3,24 +3,27 @@
 - MongoDB
 - NodeJS
 ## Установка на сервер
-1. Арендовать удаленный сервер Ubuntu
-2. Зайти на сервер через SSH ```ssh root@{server_ip}```
-3. [Установить NodeJS и npm](https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-ubuntu-20-04-ru)<br>
+1. Арендовать удаленный сервер Ubuntu.
+2. [Зарегистрировать телеграм-бота и получить токен](https://core.telegram.org/bots#3-how-do-i-create-a-bot)
+3. Зайти на сервер через SSH ```ssh root@{server_ip}```
+4. [Установить NodeJS и npm по инструкции](https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-ubuntu-20-04-ru) или выполнить команды ниже<br>
 ```cd ~```<br>
 ```curl -sL https://deb.nodesource.com/setup_18.x -o nodesource_setup.sh```<br>
 ```sudo bash nodesource_setup.sh```<br>
 ```sudo apt install nodejs```<br>
 ```sudo apt install npm```
-4. [Установить MongoDB](https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-ubuntu/#install-mongodb-community-edition)
-5. ```systemctl enable mongod```
+4. [Установить MongoDB](https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-ubuntu/#install-mongodb-community-edition) и выполнить следующие команды
+```systemctl enable mongod```
 ```systemctl start mongod```
-```sudo reboot```
-5. ```git clone репозитория```
-6. ```cd fan_club_bot```
-7. В файл token.js вставить свой токен бота
-8. ```npm i```
-9. ```npm run start```
-10. Бот запущен
+```sudo reboot```<br>Последняя команда перезагружает сервер, поэтому ждём, подключаемся к серверу заново и идём дальше.
+5. Идём в корень сервера ```cd ~``` и скачиваем репозиторий ```git clone репозитория```
+6. Идем в папку репозитория ```cd fan_club_bot```
+7. В файл token.js вставляем токен бота, полученный на шаге 2.
+8. Устанавливаем npm-пакеты ```npm i```
+9. Запускаем бота ```npm run start```<br>
+10. Если все хорошо, увидишь что-то такое
+![image](https://user-images.githubusercontent.com/18449287/181778194-56a6bf34-7bb2-49be-bc3f-3c3a2c594704.png)
+
 ## Схемы таблиц БД
 users (Пользователи)
 ```
