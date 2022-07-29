@@ -20,11 +20,6 @@ import { handleUserStart, getUsers } from "./users.js";
 
 const mainButtons = [
   {
-    text: "Предстоящие мероприятия",
-    public: false,
-    callback_data: JSON.stringify({ method: "viewEvents" }),
-  },
-  {
     text: "Добавить мероприятие",
     public: false,
     callback_data: JSON.stringify({ method: "addEvent" }),
@@ -36,6 +31,19 @@ const mainButtons = [
       method: "handleDisableEventButton",
     }),
   },
+  {
+    text: "Отметить пришедшего",
+    public: false,
+    callback_data: JSON.stringify({
+      method: "handleMarkArrivalButton",
+    }),
+  },
+  {
+    text: "Предстоящие мероприятия",
+    public: false,
+    callback_data: JSON.stringify({ method: "viewEvents" }),
+  },
+
   {
     text: "Записаться на мероприятие",
     public: true,
@@ -57,13 +65,6 @@ const mainButtons = [
       method: "handleViewCountButton",
     }),
   },
-  {
-    text: "Отметить пришедшего",
-    public: false,
-    callback_data: JSON.stringify({
-      method: "handleMarkArrivalButton",
-    }),
-  },
 ];
 
 const bot = new TelegramBot(TELEGRAM_API_TOKEN, { polling: true });
@@ -83,16 +84,22 @@ bot.onText(/\/menu/, async (msg) => {
   const userId = msg.from.id;
 
   const user = await findUser(userId);
+  if (user) {
+    const inlineKeyboard = user.admin
+      ? mainButtons
+      : mainButtons.filter((b) => b.public === true);
 
-  const inlineKeyboard = user.admin
-    ? mainButtons
-    : mainButtons.filter((b) => b.public === true);
-
-  bot.sendMessage(chatId, "Чего хочешь?", {
-    reply_markup: {
-      inline_keyboard: inlineKeyboard.map((x) => [x]),
-    },
-  });
+    bot.sendMessage(chatId, "Чего хочешь?", {
+      reply_markup: {
+        inline_keyboard: inlineKeyboard.map((x) => [x]),
+      },
+    });
+  } else {
+    bot.sendMessage(
+      chatId,
+      "Вы пока не зарегистрированы в фан-клубе. Нажми /start, чтобы зарегистрироваться."
+    );
+  }
 });
 
 bot.on("callback_query", (callbackQuery) => {
