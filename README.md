@@ -4,8 +4,13 @@
 - NodeJS
 ## Установка на сервер
 1. Арендовать удаленный сервер Ubuntu
-2. Зайти на сервер через SSH ```ssh root@{ip}```
-3. [Установить NodeJS и npm](https://losst.ru/ustanovka-node-js-ubuntu-18-04)
+2. Зайти на сервер через SSH ```ssh root@{server_ip}```
+3. [Установить NodeJS и npm](https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-ubuntu-20-04-ru)<br>
+```cd ~```<br>
+```curl -sL https://deb.nodesource.com/setup_18.x -o nodesource_setup.sh```<br>
+```sudo bash nodesource_setup.sh```<br>
+```sudo apt install nodejs```<br>
+```sudo apt install npm```
 4. [Установить MongoDB](https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-ubuntu/#install-mongodb-community-edition)
 5. ```systemctl enable mongod```
 ```systemctl start mongod```
