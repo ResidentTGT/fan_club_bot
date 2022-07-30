@@ -1,5 +1,6 @@
 # Бот для встреч футбольного сообщества 
 ## Технические требования
+- Server Ubuntu 18+
 - MongoDB
 - NodeJS
 ## Установка на сервер
@@ -11,19 +12,32 @@
 ```curl -sL https://deb.nodesource.com/setup_18.x -o nodesource_setup.sh```<br>
 ```sudo bash nodesource_setup.sh```<br>
 ```sudo apt install nodejs```<br>
-```sudo apt install npm```
-4. [Установить MongoDB](https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-ubuntu/#install-mongodb-community-edition) и выполнить следующие команды
+5. Установить Screen, чтобы бот продолжал работать после того, как мы отключимся от сервера ```apt -y install screen```
+6. [Установить MongoDB](https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-ubuntu/#install-mongodb-community-edition) и выполнить следующие команды
 ```systemctl enable mongod```
-```systemctl start mongod```
-```sudo reboot```<br>Последняя команда перезагружает сервер, поэтому ждём, подключаемся к серверу заново и идём дальше.
-5. Идём в корень сервера ```cd ~``` и скачиваем репозиторий ```git clone репозитория```
-6. Идем в папку репозитория ```cd fan_club_bot```
-7. В файл token.js вставляем токен бота, полученный на шаге 2.
-8. Устанавливаем npm-пакеты ```npm i```
-9. Запускаем бота ```npm run start```<br>
-10. Если все хорошо, увидишь что-то такое
+```systemctl start mongod```<br>
+Проверка, что сервис базы запущен ```systemctl status mongod```
+7. Идём в корень сервера ```cd ~``` и скачиваем репозиторий ```git clone https://github.com/ResidentTGT/fan_club_bot.git```
+8. Запускаем утилиту Screen ```screen```
+9. Идем в папку репозитория ```cd fan_club_bot```
+10. В файл token.js вместо API_KEY вставляем токен бота, полученный на шаге 2. ```sed -i 's/""/"API_KEY"/' token.js```
+11. Устанавливаем npm-пакеты ```npm i```
+12. Запускаем бота ```npm run start```<br>
+13. Если все хорошо, увидишь что-то такое
 ![image](https://user-images.githubusercontent.com/18449287/181778194-56a6bf34-7bb2-49be-bc3f-3c3a2c594704.png)
+14. Если хотим, чтоб бот перезапускался при любой ошибке, надо выполнить следующие команды.<br>
+Отключаем бота ```killall node```<br>
+Копируем уже созданный файл сервиса из репозитория ```cp /root/fan_club_bot/fanclubbot.service /lib/systemd/system/```<br>
+Сохраняем файл сервиса ```systemctl enable fanclubbot```<br>
+Запускаем бота ```systemctl start fanclubbot```<br>
+Готово. Теперь бот будет автоматически запускаться при старте сервера или при возникновении ошибок. Можно проверить это, завершив процесс node ```killall node```. Через 5 секунд бот автоматически перезапустится.
 
+## Удаленное подключение к БД на сервере
+1. [Скачиваем MongoDB Compass](https://www.mongodb.com/products/compass)
+2. Открываем программу, выбираем новое подключение через SSH, меняем параметры подключения и подключаемся
+![image](https://user-images.githubusercontent.com/18449287/181896868-57614c32-327f-445e-a190-2739f21f66d5.png)
+3. Слева в списке баз появится fan_club_db - это и есть наша база на сервере.
+ 
 ## Схемы таблиц БД
 users (Пользователи)
 ```
