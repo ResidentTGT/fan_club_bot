@@ -12,16 +12,18 @@
 ```curl -sL https://deb.nodesource.com/setup_18.x -o nodesource_setup.sh```<br>
 ```sudo bash nodesource_setup.sh```<br>
 ```sudo apt install nodejs```<br>
-4. [Установить MongoDB](https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-ubuntu/#install-mongodb-community-edition) и выполнить следующие команды
+5. Установить Screen, чтобы бот продолжал работать после того, как мы отключимся от сервера ```apt -y install screen```
+6. [Установить MongoDB](https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-ubuntu/#install-mongodb-community-edition) и выполнить следующие команды
 ```systemctl enable mongod```
 ```systemctl start mongod```<br>
 Проверка, что сервис базы запущен ```systemctl status mongod```
-5. Идём в корень сервера ```cd ~``` и скачиваем репозиторий ```git clone https://github.com/ResidentTGT/fan_club_bot.git```
-6. Идем в папку репозитория ```cd fan_club_bot```
-7. В файл token.js вместо API_KEY вставляем токен бота, полученный на шаге 2. ```sed -i 's/""/"API_KEY"/' token.js```
-9. Устанавливаем npm-пакеты ```npm i```
-10. Запускаем бота ```npm run start```<br>
-11. Если все хорошо, увидишь что-то такое
+7. Идём в корень сервера ```cd ~``` и скачиваем репозиторий ```git clone https://github.com/ResidentTGT/fan_club_bot.git```
+8. Запускаем утилиту Screen ```screen```
+9. Идем в папку репозитория ```cd fan_club_bot```
+10. В файл token.js вместо API_KEY вставляем токен бота, полученный на шаге 2. ```sed -i 's/""/"API_KEY"/' token.js```
+11. Устанавливаем npm-пакеты ```npm i```
+12. Запускаем бота ```npm run start```<br>
+13. Если все хорошо, увидишь что-то такое
 ![image](https://user-images.githubusercontent.com/18449287/181778194-56a6bf34-7bb2-49be-bc3f-3c3a2c594704.png)
 
 ## Схемы таблиц БД
