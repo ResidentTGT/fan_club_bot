@@ -11,12 +11,11 @@
 ```curl -sL https://deb.nodesource.com/setup_18.x -o nodesource_setup.sh```<br>
 ```sudo bash nodesource_setup.sh```<br>
 ```sudo apt install nodejs```<br>
-```sudo apt install npm```
 4. [Установить MongoDB](https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-ubuntu/#install-mongodb-community-edition) и выполнить следующие команды
 ```systemctl enable mongod```
-```systemctl start mongod```
-```sudo reboot```<br>Последняя команда перезагружает сервер, поэтому ждём, подключаемся к серверу заново и идём дальше.
-5. Идём в корень сервера ```cd ~``` и скачиваем репозиторий ```git clone git@github.com:ResidentTGT/fan_club_bot.git```
+```systemctl start mongod```<br>
+Проверка, что сервис базы запущен ```systemctl status mongod```
+5. Идём в корень сервера ```cd ~``` и скачиваем репозиторий ```git clone https://github.com/ResidentTGT/fan_club_bot.git```
 6. Идем в папку репозитория ```cd fan_club_bot```
 7. В файл token.js вставляем токен бота, полученный на шаге 2.
 8. Устанавливаем npm-пакеты ```npm i```
