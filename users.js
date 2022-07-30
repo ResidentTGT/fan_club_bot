@@ -1,14 +1,12 @@
-import { findUser, addUser, getUsers as getUsersFromDB } from "./mongo.js";
+import { User } from "./models.js";
+import { findUser, addUser } from "./mongo.js";
 
 const registerUser = async (msg, bot) => {
   const chatId = msg.chat.id;
   const userId = msg.from.id;
 
-  const newUser = {
-    telegramUserId: userId,
-    telegramUsername: msg.from.username,
-    admin: false,
-  };
+  const newUser = new User(userId, msg.from.username);
+
   await bot.sendMessage(
     chatId,
     "Привет, добро пожаловать в фан-клуб Moscow Blues! Здесь ты можешь смотреть регистрации на предстоящие мероприятия, регистрироваться на них и смотреть актуальный список записавшихся. "
@@ -50,23 +48,6 @@ const registerUser = async (msg, bot) => {
     });
 };
 
-const getUsers = async (msg, bot) => {
-  const chatId = msg.chat.id;
-
-  const users = await getUsersFromDB();
-
-  bot.sendMessage(
-    chatId,
-
-    users
-      .map(
-        (user) =>
-          `Имя: ${user.name}, телефон: ${user.phone}, никнейм: ${user.telegramUsername}`
-      )
-      .join("\n")
-  );
-};
-
 const handleUserStart = async (msg, bot) => {
   const chatId = msg.chat.id;
   const userId = msg.from.id;
@@ -83,4 +64,4 @@ const handleUserStart = async (msg, bot) => {
   }
 };
 
-export { registerUser, handleUserStart, getUsers };
+export { registerUser, handleUserStart };

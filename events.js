@@ -1,4 +1,5 @@
 import { ObjectId } from "mongodb";
+import { Event } from "./models.js";
 import {
   getEvents,
   addEvent as saveEventToDb,
@@ -30,7 +31,6 @@ const viewActiveEvents = async (bot, chatId) => {
 };
 
 const addEvent = async (bot, chatId) => {
-  const newEvent = { active: true };
   await bot
     .sendMessage(chatId, "Введи название события:", {
       reply_markup: JSON.stringify({
@@ -39,7 +39,8 @@ const addEvent = async (bot, chatId) => {
     })
     .then(async (msg) => {
       await bot.onReplyToMessage(chatId, msg.message_id, async (reply) => {
-        newEvent.name = reply.text;
+        const newEvent = new Event(reply.text);
+
         await bot
           .sendMessage(chatId, `Место проведения:`, {
             reply_markup: JSON.stringify({
@@ -131,7 +132,7 @@ const handleRegisterOnEventButton = async (bot, chatId) => {
 };
 
 const handleCancelRegistrationButton = async (bot, chatId, userId) => {
-  const records = await getRecords({ userId });
+  const records = await getRecords({ userId, active: true });
 
   const eventsIds = records.map((r) => ObjectId(r.eventId));
 

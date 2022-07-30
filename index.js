@@ -16,7 +16,7 @@ import {
   handleViewCountButton,
   viewCount,
 } from "./events.js";
-import { handleUserStart, getUsers } from "./users.js";
+import { handleUserStart } from "./users.js";
 
 const mainButtons = [
   {
@@ -73,10 +73,6 @@ await connectToDatabase();
 
 bot.onText(/\/start/, async (msg) => {
   await handleUserStart(msg, bot);
-});
-
-bot.onText(/\/users/, async (msg) => {
-  await getUsers(msg, bot);
 });
 
 bot.onText(/\/menu/, async (msg) => {
