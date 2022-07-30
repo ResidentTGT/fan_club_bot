@@ -1,0 +1,14 @@
+[Unit]
+Description=FanClubBot - Telegram bot
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/node index.js
+ExecReload=/usr/bin/node index.js
+WorkingDirectory=/root/fan_club_bot/
+KillMode=process
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
