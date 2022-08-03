@@ -32,6 +32,13 @@
 Запускаем бота ```systemctl start fanclubbot```<br>
 Готово. Теперь бот будет автоматически запускаться при старте сервера или при возникновении ошибок. Можно проверить это, завершив процесс node ```killall node```. Через 5 секунд бот автоматически перезапустится.
 
+## Обновление бота
+```systemctl stop fanclubbot```<br>
+```cd ~/fan_club_bot/```<br>
+```git pull origin```<br>
+```systemctl enable fanclubbot```<br>
+```systemctl start fanclubbot```<br>
+
 ## Удаленное подключение к БД на сервере
 1. [Скачиваем MongoDB Compass](https://www.mongodb.com/products/compass)
 2. Открываем программу, выбираем новое подключение через SSH, меняем параметры подключения и подключаемся
