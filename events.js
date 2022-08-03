@@ -132,7 +132,7 @@ const handleRegisterOnEventButton = async (bot, chatId) => {
 };
 
 const handleCancelRegistrationButton = async (bot, chatId, userId) => {
-  const records = await getRecords({ userId, active: true });
+  const records = await getRecords({ userId });
 
   const eventsIds = records.map((r) => ObjectId(r.eventId));
 
